@@ -10,7 +10,14 @@ const finalMessageRevealWord = document.getElementById(
 
 const figureParts = document.querySelectorAll(".figure-part");
 
-const words = ["aplicacion", "programar", " manzana", "javascript"];
+const words = [
+  "aplicacion",
+  "manzana",
+  "javascript",
+  "tiempo",
+  "amor",
+  "podcast"
+];
 
 // selecion ramdon
 
@@ -35,7 +42,7 @@ function displayWord() {
       )
       .join("")}`;
 
-  const innerWord = wordEl.innerText.replace(/[ja\n]/g, "");
+  const innerWord = wordEl.innerText.replace(/[ \n]/g, "");
 
   if (innerWord === selectWord) {
     finalMessage.innerText = "Congratulations! You won! 😃";
@@ -51,26 +58,29 @@ function showNotification() {
     notification.classList.remove("show");
   }, 2000);
 }
+// Update the wrong letters
 function updateWrongLettersEl() {
+  // Display wrong letters
   wrongLettersEl.innerHTML = `
-  ${wrongLetters.length > 0 ? "<p>Wrong</p>" : ""}
-  ${wrongLetters.map(letter => `<span>${letter}</span>`)}
+    ${wrongLetters.length > 0 ? "<p>Wrong</p>" : ""}
+    ${wrongLetters.map(letter => `<span>${letter}</span>`)}
   `;
 
-  // mostra partes
-
+  // Display parts
   figureParts.forEach((part, index) => {
     const errors = wrongLetters.length;
+
     if (index < errors) {
-      part.style.display = "flex";
+      part.style.display = "block";
     } else {
       part.style.display = "none";
     }
   });
 
+  // Check if lost
   if (wrongLetters.length === figureParts.length) {
     finalMessage.innerText = "Unfortunately you lost. 😕";
-    finalMessageRevealWord.innerText = `...the word was: ${selectedWord}`;
+    finalMessageRevealWord.innerText = `...the word was: ${selectWord}`;
     popup.style.display = "flex";
 
     playable = false;
@@ -102,7 +112,7 @@ window.addEventListener("keydown", e => {
   }
 });
 
-playAgainBtn.addEventListener("click", () => {
+function modal() {
   playable = true;
   correctLetters.splice(0);
   wrongLetters.splice(0);
@@ -114,6 +124,13 @@ playAgainBtn.addEventListener("click", () => {
   updateWrongLettersEl();
 
   popup.style.display = "none";
+}
+playAgainBtn.addEventListener("click", modal);
+window.addEventListener("keydown", e => {
+  if (popup.style.display === "flex") {
+    if (e.keyCode === 13) {
+      modal();
+    }
+  }
 });
-
 displayWord();
